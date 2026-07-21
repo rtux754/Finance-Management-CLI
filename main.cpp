@@ -10,9 +10,9 @@
 #ifdef _WIN32
 #include <windows.h>
 #endif
-
 using namespace std;
 
+// ======= Struktur Data =======
 struct Transaction {
     int id;           // id untuk setiap transaksi
     string date;      // Tanggal transaksi
@@ -22,34 +22,41 @@ struct Transaction {
     string note;      // catatan atau deskripsi singkat
 };
 
-// DEKLARASI TIPE DATA VECTOR SECARA GLOBAL AGAR MEMPERMUDAH PEMBUATAN DAN HEMAT BARIS CODE
 vector<Transaction> transactions;
 
-
-// FUNGSI UI
+// ======== FUNGSI UI =======
 void clearScreen();
-void changeColor(string colorCode);
+void setupTerminal();
 void organizer();
 void customer();
 
-// FUNGSI I/O
+// ======= Warna =======
+void setHexColor(string hexCode);
+void primaryColor();
+void secondaryColor();
+void warningColor();
+void errorColor();
+void successColor();
+void resetColor();
+
+// ======= FUNGSI I/O =======
 void addIncome();
 void addExpense();
 void viewAllTransactions();
 void checkBalance();
 
-// OPERASI SPESIFIK
+// ======= OPERASI SPESIFIK =======
 void deleteTransactionById(int targetId);
 void updateTransactionById(int targetId); // digunakan untuk mengedit salah nomial atau mengubah nominal transaksi yang sudah lewat
 void exportToReceipt(int targetId);
 void filterByCategory(string catName);
 void clearAllHistory();
 
-// SISTEM FILE
+// ======= SISTEM FILE =======
 void load();
 void save();
 
-// FUNGSI PEMBERSIH LAYAR AGAR BERSIH
+// ======= FUNGSI PEMBERSIH LAYAR AGAR BERSIH =======
 void clearScreen() {
 #ifdef _WIN32
         system("cls");
@@ -58,14 +65,11 @@ void clearScreen() {
 #endif
 }
 
-// FUNGSI UNTUK MEMBERIKAN WARNA AGAR TIDAK BORING
-void changeColor(string colorCode) {
-    string command = "color " + colorCode;
-    system(command.c_str());
+void setupTerminal() {
+
 }
 
 int main() {
-    changeColor("9F");
     clearScreen();
 
     load();
