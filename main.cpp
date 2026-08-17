@@ -94,10 +94,11 @@ void errorColor()     { setHexColor("#DA4453"); }
 void resetColor()     { cout  << "\033[0m"; }
 
 int main() {
+    setupTerminal();
     clearScreen();
-
     load();
 
+    primaryColor();
     cout << "                                           ****************************************************" << endl;
     cout << "                                                                                               " << endl;
     cout << "                                                     WELCOME TO FINANCE MANAGEMENT CLI         " << endl;
