@@ -82,16 +82,16 @@ void setHexColor(string hexCode) {
     int r = stoi(hexCode.substr(0, 2), nullptr, 16);
     int g = stoi(hexCode.substr(2, 2), nullptr, 16);
     int b = stoi(hexCode.substr(4, 2), nullptr, 16);
-    cout << "\003[38;2" << r << ";" << g << ";" << b << "m";
+    cout << "\003[38;2;" << r << ";" << g << ";" << b << "m";
 }
 
 // ini skema warnanya
-void primaryColor() { setHexColor("#3DAEE9"); }
+void primaryColor()   { setHexColor("#3DAEE9"); }
 void secondaryColor() { setHexColor("#EFF0F1"); }
-void successColor() { setHexColor("#27AE60"); }
-void warningColor() { setHexColor("#FDBC4B"); }
-void errorColor() { setHexColor("#DA4453"); }
-void resetColor() { cout  << "\033[0m"; }
+void successColor()   { setHexColor("#27AE60"); }
+void warningColor()   { setHexColor("#FDBC4B"); }
+void errorColor()     { setHexColor("#DA4453"); }
+void resetColor()     { cout  << "\033[0m"; }
 
 int main() {
     clearScreen();
