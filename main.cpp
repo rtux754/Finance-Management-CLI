@@ -10,6 +10,7 @@
 #ifdef _WIN32
 #include <windows.h>
 #endif
+
 using namespace std;
 
 // ======= Struktur Data =======
@@ -82,7 +83,7 @@ void setHexColor(string hexCode) {
     int r = stoi(hexCode.substr(0, 2), nullptr, 16);
     int g = stoi(hexCode.substr(2, 2), nullptr, 16);
     int b = stoi(hexCode.substr(4, 2), nullptr, 16);
-    cout << "\003[38;2;" << r << ";" << g << ";" << b << "m";
+    cout << "\033[38;2;" << r << ";" << g << ";" << b << "m";
 }
 
 // ini skema warnanya
