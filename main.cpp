@@ -65,9 +65,33 @@ void clearScreen() {
 #endif
 }
 
+// aktifkan virtual terminal processing ya kawan biar si jendela bisa gonta-ganti warna
 void setupTerminal() {
-
+#ifdef _WIN32
+    HANDLE hOut = GetStdHandle(STD_UOTPUT_HANDLE);
+    DWORD dwMode = 0;
+    GetConsoleMode(hOut, &dwMode);
+    dwMode |= ENABLE_VIRTUAL_PROCESSING;
+    SetConsoleMode(hOut, dwMode);
+#endif
 }
+
+// ini fungsi buat nerjemahin kode hex ke ansi ya
+void setHexColor(string hexCode) {
+    if (hexCode[0] == '#') hexCode = hexCode.substr(1);
+    int r = stoi(hexCode.substr(0, 2), nullptr, 16);
+    int g = stoi(hexCode.substr(2, 2), nullptr, 16);
+    int b = stoi(hexCode.substr(4, 2), nullptr, 16);
+    cout << "\003[38;2" << r << ";" << g << ";" << b << "m";
+}
+
+// ini skema warnanya
+void primaryColor() { setHexColor("#3DAEE9"); }
+void secondaryColor() { setHexColor("#EFF0F1"); }
+void successColor() { setHexColor("#27AE60"); }
+void warningColor() { setHexColor("#FDBC4B"); }
+void errorColor() { setHexColor("#DA4453"); }
+void resetColor() { cout  << "\033[0m"; }
 
 int main() {
     clearScreen();
@@ -81,19 +105,25 @@ int main() {
     cout << "                                           ****************************************************" << endl;
     cout << "                                                Catat | Atur | Pantau | Amankan Keuanganmu     " << endl;
     cout << "                                           ****************************************************" << endl;
+    resetColor();
 
     while (true) {
+        primaryColor();
         cout << "\n                                                          Menu Main:" << endl;
+        secondaryColor();
         cout << "                                                          1. Organizer Menu (Auditor)" << endl;
         cout << "                                                          2. Customer Menu (Pencatat)" << endl;
         cout << "                                                          3. Close & Save System" << endl;
         cout << "                                                          Enter your choice: ";
+        resetColor();
 
         int choice;
         if (!(cin >> choice)) {
             cin.clear();
             cin.ignore(1000, '\n');
-            cout << "                                                          Masukkan angka yang valid!\n";
+            errorColor();
+            cout << "                                                          [ERROR] Masukkan angka yang valid!\n";
+            resetColor();
             continue;
         }
 
@@ -109,12 +139,18 @@ int main() {
         case 3:
             clearScreen();
             save();
+            primaryColor();
             cout << "                                      **********************************************************\n";
+            successColor();
             cout << "                                        Terima kasih telah menggunakan FINANCE MANAGEMENT CLI!\n";
+            primaryColor();
             cout << "                                      **********************************************************\n";
+            resetColor();
             return 0;
         default:
-            cout << "                                                          Pilihan Tidak Valid. Mohon Coba Kembali.\n";
+            errorColor();
+            cout << "                                                          [ERROR] Pilihan Tidak Valid. Mohon Coba Kembali.\n";
+            resetColor();
         }
     }
     return 0;
@@ -124,19 +160,24 @@ int main() {
 void organizer() {
     int choice;
     do {
+        primaryColor();
         cout << "                                                         ============================================\n";
         cout << "                                                                           ORGANIZER MENU            \n";
         cout << "                                                         ============================================\n";
+        secondaryColor();
         cout << "                                                         1. View All Transactions" << endl;
         cout << "                                                         2. Delete Transaction By Id" << endl;
         cout << "                                                         3. Clear All History" << endl;
         cout << "                                                         4. Back to Main Menu" << endl;
         cout << "                                                         Enter your choice ";
+        resetColor();
 
         if(!(cin >> choice)) {
             cin.clear();
             cin.ignore(1000, '\n');
-            cout << "                                                         Masukkan input angka!\n";
+            errorColor();
+            cout << "                                                         [ERROR] Masukkan input angka!\n";
+            resetColor();
             continue;
         }
 
@@ -147,8 +188,10 @@ void organizer() {
             break;
         case 2:
             int targetId;
-            cout << "                                                         Enter Target ID to Delete: ";
+            secondaryColor();
+            cout << "                                                         Masukkan Target ID yang Ingin dihapus: ";
             cin >> targetId;
+            resetColor();
             clearScreen();
             deleteTransactionById(targetId);
             break;
@@ -160,7 +203,9 @@ void organizer() {
             clearScreen();
             return;
         default:
-            cout << "                                                         Pilihan tidak valid, coba lagi.\n";
+            errorColor();
+            cout << "                                                         [ERROR] Pilihan tidak valid, coba lagi.\n";
+            resetColor();
         }
     }while (choice != 4);
 }
@@ -169,9 +214,11 @@ void organizer() {
 void customer() {
     int choice;
      do {
+         primaryColor();
          cout << "                                                    ============================================\n";
          cout << "                                                                    CUSTOMER MENU                \n";
          cout << "                                                    ============================================\n";
+         secondaryColor();
          cout << "                                                    1. Add Income" << endl;
          cout << "                                                    2. Add Expense" << endl;
          cout << "                                                    3. Check Balance" << endl;
@@ -180,11 +227,14 @@ void customer() {
          cout << "                                                    6. Filter By Category" << endl;
          cout << "                                                    7. Back to Main menu" << endl;
          cout << "                                                    Enter your choice: ";
+         resetColor();
 
          if(!(cin >> choice)) {
              cin.clear();
              cin.ignore(1000, '\n');
-             cout << "                                                    Masukkan input angka!\n";
+             errorColor();
+             cout << "                                                    [ERROR] Masukkan input angka!\n";
+             resetColor();
              continue;
          }
 
@@ -203,23 +253,29 @@ void customer() {
             break;
         case 4: {
             int targetId;
+            secondaryColor();
             cout << "                                                     Masukkan ID Transaksi yang ingin di update: ";
             cin >> targetId;
+            resetColor();
             clearScreen();
             updateTransactionById(targetId);
             break;
         }
         case 5: {
             int targetId;
+            secondaryColor();
             cout << "                                                     Masukkan ID Transaksi untuk Cetak Struk: ";
             cin >> targetId;
+            resetColor();
             clearScreen();
             exportToReceipt(targetId);
             break;
         }
         case 6: {
             string catName;
+            secondaryColor();
             cout << "                                                     Masukkan Nama Kategori yang ingin dicari: ";
+            resetColor();
             cin.ignore();
             getline(cin, catName);
             clearScreen();
@@ -230,7 +286,9 @@ void customer() {
             clearScreen();
             return;
         default:
-            cout << "                                                     Pilihan Tidak Valid!\n";
+            errorColor();
+            cout << "                                                     [ERROR] Pilihan Tidak Valid!\n";
+            resetColor();
         }
      } while (choice != 7);
 }
@@ -239,6 +297,7 @@ void customer() {
 //
 void addIncome() {
     Transaction newTx;
+    primaryColor();
     cout << "                                                     ============================================\n";
     cout << "                                                                   TAMBAH PEMASUKAN              \n";
     cout << "                                                     ============================================\n";
@@ -247,6 +306,7 @@ void addIncome() {
     newTx.type = "Pemasukan";
 
     cin.ignore();
+    secondaryColor();
     cout << "                                                     Masukkan Tanggal (DD-MM-YYYY): ";
     getline(cin, newTx.date);
     cout << "                                                     Masukkan Nominal (Rp)        : ";
@@ -258,15 +318,18 @@ void addIncome() {
     getline(cin, newTx.note);
 
     transactions.push_back(newTx);
+    successColor();
     cout << "\n                                                     [SUKSES] Pemasukan berhasil dicatat!\n";
+    primaryColor();
     cout << "                                                     ============================================\n";
+    resetColor();
 }
 
 // FUNGSI UNTUK MENAMBAHKAN PENGELUARAN
 //
 void addExpense() {
     Transaction newTx;
-
+    primaryColor();
     cout << "                                                     ============================================\n";
     cout << "                                                                  TAMBAH PENGELUARAN             \n";
     cout << "                                                     ============================================\n";
@@ -275,6 +338,7 @@ void addExpense() {
     newTx.type = "Pengeluaran";
 
     cin.ignore();
+    secondaryColor();
     cout << "                                                     Masukkan Tanggal (DD-MM-YYYY): ";
     getline(cin, newTx.date);
     cout << "                                                     Masukkan Nominal (Rp)        : ";
@@ -286,11 +350,15 @@ void addExpense() {
     getline(cin, newTx.note);
 
     transactions.push_back(newTx);
+    successColor();
     cout << "\n                                                     [SUKSES] Pengeluaran berhasil dicatat!\n";
+    primaryColor();
     cout << "                                                     ============================================\n";
+    resetColor();
 }
 
 void viewAllTransactions() {
+    primaryColor();
     cout << "========================================================================================================\n";
     cout << "                                           DAFTAR SEMUA TRANSAKSI                                       \n";
     cout << "========================================================================================================\n";
@@ -303,8 +371,10 @@ void viewAllTransactions() {
     cout << "--------------------------------------------------------------------------------------------------------\n";
 
     if (transactions.empty()) {
+        errorColor();
         cout << "                                    --- Belum ada data transaksi ---                                    \n";
     } else {
+        secondaryColor();
         for (const Transaction& tx : transactions) {
             cout << " " << setw(5) << left << tx.id
                  << " | " << setw(12) << left << tx.date
@@ -314,7 +384,9 @@ void viewAllTransactions() {
                  << " | " << left << tx.note << endl;
         }
     }
+    primaryColor();
     cout << "========================================================================================================\n\n";
+    resetColor();
 }
 
 void checkBalance() {
@@ -330,13 +402,21 @@ void checkBalance() {
     }
     double currentBalance = totalIncome - totalExpense;
 
+    primaryColor();
     cout << "                                                     ============================================\n";
     cout << "                                                                 RINGKASAN REKENING ANDA         \n";
     cout << "                                                     ============================================\n";
+    secondaryColor();
     cout << "                                                      Total Pemasukan   : Rp " << fixed << setprecision(0) << totalIncome << endl;
     cout << "                                                      Total Pengeluaran : Rp " << totalExpense << endl;
+    primaryColor();
     cout << "                                                     --------------------------------------------\n";
+    if (currentBalance < 0) errorColor();
+    else if (currentBalance == 0) warningColor();
+    else successColor();
+
     cout << "                                                      SALDO SAAT INI    : Rp " << currentBalance << endl;
+    primaryColor();
     cout << "                                                     ============================================\n\n";
 }
 
@@ -345,17 +425,21 @@ void updateTransactionById(int targetId) {
         return item.id == targetId;
     });
 
+    primaryColor();
+    cout << "                                                     ============================================\n";
     if (it != transactions.end()) {
-        cout << "                                                     ============================================\n";
         cout << "                                                                 EDIT DATA TRANSAKSI             \n";
         cout << "                                                     ============================================\n";
+        secondaryColor();
         cout << "                                                      Data Lama Anda: \n";
         cout << "                                                      Tanggal  : " << it->date << endl;
         cout << "                                                      Nominal  : Rp " << fixed << setprecision(0) << it->amount << endl;
         cout << "                                                      Kategori : " << it->category << endl;
         cout << "                                                      Catatan  : " << it->note << endl;
+        primaryColor();
         cout << "                                                     --------------------------------------------\n";
 
+        secondaryColor();
         cout << "                                                      Masukkan Data Pembaruan:\n";
         cin.ignore();
         cout << "                                                      Tanggal Baru (DD-MM-YYYY): ";
@@ -368,27 +452,39 @@ void updateTransactionById(int targetId) {
         cout << "                                                      Catatan Baru             : ";
         getline(cin, it->note);
 
+        primaryColor();
         cout << "                                                     ============================================\n";
+        successColor();
         cout << "                                                     [SUKSES] Data Transaksi Berhasil Di-update! \n";
+        primaryColor();
         cout << "                                                     ============================================\n";
+        resetColor();
     } else {
+        errorColor();
         cout << "                                                     [ERROR] ID " << targetId << " tidak ditemukan di database.\n";
     }
+        resetColor();
 }
 
 void deleteTransactionById(int targetId) {
     auto it = find_if(transactions.begin(), transactions.end(), [targetId](const Transaction& item) {
         return item.id == targetId;
     });
+
+    primaryColor();
+    cout << "                                                     ============================================\n";
     if (it != transactions.end()) {
-        cout << "                                                     ============================================\n";
+        successColor();
         cout << "                                                     [SUKSES] ID " << targetId << " (" << it->note << ") Ditemukan.\n";
         cout << "                                                     Catatan Transaksi Resmi Dihapus dari Sistem.\n";
-        cout << "                                                     ============================================\n";
         transactions.erase(it);
     } else {
+        errorColor();
         cout << "                                                     [ERROR] Transaksi dengan ID "<< targetId << " Tidak Ditemukan.\n";
     }
+    primaryColor();
+    cout << "                                                     ============================================\n";
+    resetColor();
 }
 
 void exportToReceipt(int targetId) {
@@ -397,24 +493,32 @@ void exportToReceipt(int targetId) {
     });
 
     if (it != transactions.end()) {
+        primaryColor();
         cout << "                                                     ============================================\n";
         cout << "                                                                   OFFICIAL RECEIPT              \n";
         cout << "                                                     ============================================\n";
+        secondaryColor();
         cout << "                                                      ID Transaksi : " << it->id << endl;
         cout << "                                                      Tanggal      : " << it->date << endl;
         cout << "                                                      Jenis Kas    : " << it->type << endl;
         cout << "                                                      Kategori     : " << it->category << endl;
         cout << "                                                      Keterangan   : " << it->note << endl;
+        primaryColor();
         cout << "                                                     --------------------------------------------\n";
+        successColor();
         cout << "                                                      TOTAL DANA   : Rp " << fixed << setprecision(0) << it->amount << endl;
+        primaryColor();
         cout << "                                                     ============================================\n\n";
     } else {
+        errorColor();
         cout << "                                                     [ERROR] ID Transaksi " << targetId << " tidak valid.\n";
     }
+    resetColor();
 }
 
 void filterByCategory(string catName) {
     bool ditemukan = false;
+    primaryColor();
     cout << "========================================================================================================\n";
     cout << "                                      HASIL FILTER KATEGORI: " << catName << "                           \n";
     cout << "========================================================================================================\n";
@@ -425,6 +529,7 @@ void filterByCategory(string catName) {
          << " | " << left << "Catatan" << endl;
     cout << "--------------------------------------------------------------------------------------------------------\n";
 
+    secondaryColor();
     for (const auto& tx : transactions) {
         if (tx.category == catName) {
             cout << " " << setw(5) << left << tx.id
@@ -437,21 +542,29 @@ void filterByCategory(string catName) {
     }
 
     if (!ditemukan) {
+        warningColor();
         cout << "                               --- Tidak ada transaksi di kategori ini ---                              \n";
     }
+    primaryColor();
     cout << "========================================================================================================\n\n";
+    resetColor();
 }
 
 void clearAllHistory() {
     char confirm;
+    warningColor();
     cout << "                                                     Apakah anda yakin ingin menghapus seluruh data? (y/n): ";
+    resetColor();
     cin >> confirm;
     if (confirm == 'y' || confirm == 'Y') {
         transactions.clear();
+        successColor();
         cout << "                                                     [SUKSES] Seluruh riwayat transaksi dikosongkan!\n";
     } else {
+        secondaryColor();
         cout << "                                                     [INFO] Pembatalan penghapusan riwayat.\n";
     }
+    resetColor();
 }
 
 void save() {
@@ -466,10 +579,13 @@ void save() {
                         << tx.note << "\n";
         }
         bookAccount.close();
+        successColor();
         cout << "                                          [SYSTEM] Database sinkron. Data berhasil disimpan.\n";
     } else {
+        errorColor();
         cout << "                                          [ERROR] Gagal menulis ke berkas backup!\n";
     }
+    resetColor();
 }
 
 void load() {
