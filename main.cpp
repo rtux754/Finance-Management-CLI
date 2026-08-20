@@ -1,3 +1,9 @@
+// Aku membuat program ini dikarenakan aku sebagai seorang manusia yang memiliki masalah menajemen keungan ku
+// aku berharap dengan adanya program yang ku buat ini aku bisa menjadi pribadi yang disiplin dalam setiap hal
+// di dalam konteks ini adalah disiplin melakukan pencatatan dan mengurangi pengeluaran yang tidak dibutuhkan.
+// ini hanya program mandiri biasa tapi jikalau ada yang ingin menambahkan fitur baru atau mengubah tampilannya menjadi GUI
+// aku sama sekali tidak masalah karena kalau aku punya laptop yang lebih kuat aku akan menulis ulang menggunakan Dart LOL.
+
 #include <iostream>
 #include <string>
 #include <cstdlib>
@@ -296,7 +302,6 @@ void customer() {
 }
 
 // FUNGSI UNTUK MENAMBAHKAN PEMASUKAN
-//
 void addIncome() {
     Transaction newTx;
     primaryColor();
@@ -328,7 +333,6 @@ void addIncome() {
 }
 
 // FUNGSI UNTUK MENAMBAHKAN PENGELUARAN
-//
 void addExpense() {
     Transaction newTx;
     primaryColor();
