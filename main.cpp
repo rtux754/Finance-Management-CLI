@@ -66,7 +66,7 @@ void save();
 // ======= FUNGSI PEMBERSIH LAYAR AGAR BERSIH =======
 void clearScreen() {
 #ifdef _WIN32
-        system("cls");
+    system("cls");
 #else
     system("clear");
 #endif
