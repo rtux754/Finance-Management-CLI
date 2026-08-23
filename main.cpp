@@ -46,6 +46,10 @@ void errorColor();
 void successColor();
 void resetColor();
 
+// ======= Nominal =====
+double parseNominalInput(string input);
+string formatRupiah(double amount);
+
 // ======= FUNGSI I/O =======
 void addIncome();
 void addExpense();
@@ -99,6 +103,32 @@ void successColor()   { setHexColor("#27AE60"); }
 void warningColor()   { setHexColor("#FDBC4B"); }
 void errorColor()     { setHexColor("#DA4453"); }
 void resetColor()     { cout  << "\033[0m"; }
+
+double parseNominalInput(string input) {
+    string cleanInput = "";
+    for (char c : input) {
+        if (c != '.' && c != ',') {
+            cleanInput += c;
+        }
+    }
+    try {
+        return stod(cleanInput);
+    } catch (...) {
+        return 0.0;
+    }
+}
+
+string formatRupiah (double amount) {
+    stringstream ss;
+    ss << fixed << setprecision(0) << amount;
+    string str = ss.str();
+    int insertPosition = str.length() - 3;
+    while (insertPosition > 0 && str[insertPosition - 1] != '-') {
+        str.insert(insertPosition, ".");
+        insertPosition -= 3;
+    }
+    return str;
+}
 
 int main() {
     setupTerminal();
@@ -304,6 +334,8 @@ void customer() {
 // FUNGSI UNTUK MENAMBAHKAN PEMASUKAN
 void addIncome() {
     Transaction newTx;
+    string tempNominal;
+
     primaryColor();
     cout << "                                                     ============================================\n";
     cout << "                                                                   TAMBAH PEMASUKAN              \n";
@@ -317,8 +349,8 @@ void addIncome() {
     cout << "                                                     Masukkan Tanggal (DD-MM-YYYY): ";
     getline(cin, newTx.date);
     cout << "                                                     Masukkan Nominal (Rp)        : ";
-    cin >> newTx.amount;
-    cin.ignore();
+    getline(cin, tempNominal);
+    newTx.amount = parseNominalInput(tempNominal);
     cout << "                                                     Masukkan Kategori (cth: Gaji): ";
     getline(cin, newTx.category);
     cout << "                                                     Catatan / Deskripsi Singkat  : ";
@@ -335,6 +367,8 @@ void addIncome() {
 // FUNGSI UNTUK MENAMBAHKAN PENGELUARAN
 void addExpense() {
     Transaction newTx;
+    string tempNominal;
+
     primaryColor();
     cout << "                                                     ============================================\n";
     cout << "                                                                  TAMBAH PENGELUARAN             \n";
@@ -348,8 +382,8 @@ void addExpense() {
     cout << "                                                     Masukkan Tanggal (DD-MM-YYYY): ";
     getline(cin, newTx.date);
     cout << "                                                     Masukkan Nominal (Rp)        : ";
-    cin >> newTx.amount;
-    cin.ignore();
+    getline(cin, tempNominal);
+    newTx.amount = parseNominalInput(tempNominal);
     cout << "                                                     Masukkan Kategori (cth: Makan): ";
     getline(cin, newTx.category);
     cout << "                                                     Catatan / Deskripsi Singkat   : ";
@@ -385,7 +419,7 @@ void viewAllTransactions() {
             cout << " " << setw(5) << left << tx.id
                  << " | " << setw(12) << left << tx.date
                  << " | " << setw(13) << left << tx.type
-                 << " | " << setw(18) << left << fixed << setprecision(0) << tx.amount
+                 << " | " << setw(18) << left << formatRupiah(tx.amount)
                  << " | " << setw(15) << left << tx.category
                  << " | " << left << tx.note << endl;
         }
@@ -413,15 +447,15 @@ void checkBalance() {
     cout << "                                                                 RINGKASAN REKENING ANDA         \n";
     cout << "                                                     ============================================\n";
     secondaryColor();
-    cout << "                                                      Total Pemasukan   : Rp " << fixed << setprecision(0) << totalIncome << endl;
-    cout << "                                                      Total Pengeluaran : Rp " << totalExpense << endl;
+    cout << "                                                      Total Pemasukan   : Rp " << formatRupiah(totalIncome) << endl;
+    cout << "                                                      Total Pengeluaran : Rp " << formatRupiah(totalExpense) << endl;
     primaryColor();
     cout << "                                                     --------------------------------------------\n";
     if (currentBalance < 0) errorColor();
     else if (currentBalance == 0) warningColor();
     else successColor();
 
-    cout << "                                                      SALDO SAAT INI    : Rp " << currentBalance << endl;
+    cout << "                                                      SALDO SAAT INI    : Rp " << formatRupiah(currentBalance) << endl;
     primaryColor();
     cout << "                                                     ============================================\n\n";
 }
@@ -439,7 +473,7 @@ void updateTransactionById(int targetId) {
         secondaryColor();
         cout << "                                                      Data Lama Anda: \n";
         cout << "                                                      Tanggal  : " << it->date << endl;
-        cout << "                                                      Nominal  : Rp " << fixed << setprecision(0) << it->amount << endl;
+        cout << "                                                      Nominal  : Rp " << formatRupiah(it->amount) << endl;
         cout << "                                                      Kategori : " << it->category << endl;
         cout << "                                                      Catatan  : " << it->note << endl;
         primaryColor();
@@ -451,8 +485,9 @@ void updateTransactionById(int targetId) {
         cout << "                                                      Tanggal Baru (DD-MM-YYYY): ";
         getline(cin, it->date);
         cout << "                                                      Nominal Baru (Rp)        : ";
-        cin >> it->amount;
-        cin.ignore();
+        string tempNominal;
+        getline(cin, tempNominal);
+        it->amount = parseNominalInput(tempNominal);
         cout << "                                                      Kategori Baru            : ";
         getline(cin, it->category);
         cout << "                                                      Catatan Baru             : ";
@@ -512,7 +547,7 @@ void exportToReceipt(int targetId) {
         primaryColor();
         cout << "                                                     --------------------------------------------\n";
         successColor();
-        cout << "                                                      TOTAL DANA   : Rp " << fixed << setprecision(0) << it->amount << endl;
+        cout << "                                                      TOTAL DANA   : Rp " << formatRupiah(it->amount) << endl;
         primaryColor();
         cout << "                                                     ============================================\n\n";
     } else {
@@ -541,7 +576,7 @@ void filterByCategory(string catName) {
             cout << " " << setw(5) << left << tx.id
                  << " | " << setw(12) << left << tx.date
                  << " | " << setw(13) << left << tx.type
-                 << " | " << setw(18) << left << fixed << setprecision(0) << tx.amount
+                 << " | " << setw(18) << formatRupiah(tx.amount)
                  << " | " << left << tx.note << endl;
             ditemukan = true;
         }
