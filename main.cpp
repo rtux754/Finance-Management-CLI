@@ -55,6 +55,7 @@ void addIncome();
 void addExpense();
 void viewAllTransactions();
 void checkBalance();
+void jumlahSaldo();
 
 // ======= OPERASI SPESIFIK =======
 void deleteTransactionById(int targetId);
@@ -130,6 +131,24 @@ string formatRupiah (double amount) {
     return str;
 }
 
+void jumlahSaldo() {
+    double totalIncome = 0;
+    double totalExpense = 0;
+
+    for (const Transaction& tx: transactions) {
+        if (tx.type == "Pemasukan") {
+            totalIncome += tx.amount;
+        } else if (tx.type == "Pengeluaran") {
+            totalExpense += tx.amount;
+        }
+    }
+    double currentBalance = totalIncome - totalExpense;
+
+    primaryColor();
+    cout << "                                           SALDO : Rp " << formatRupiah(currentBalance) << endl;
+    resetColor();
+}
+
 int main() {
     setupTerminal();
     clearScreen();
@@ -144,7 +163,8 @@ int main() {
     cout << "                                                Catat | Atur | Pantau | Amankan Keuanganmu     " << endl;
     cout << "                                           ****************************************************" << endl;
     resetColor();
-
+    jumlahSaldo();
+    
     while (true) {
         primaryColor();
         cout << "\n                                                          Menu Main:" << endl;
