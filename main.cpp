@@ -227,7 +227,7 @@ void organizer() {
         cout << "                                                         2. Delete Transaction By Id" << endl;
         cout << "                                                         3. Clear All History" << endl;
         cout << "                                                         4. Back to Main Menu" << endl;
-        cout << "                                                         Enter your choice ";
+        cout << "                                                         Enter your choice: ";
         resetColor();
 
         if(!(cin >> choice)) {
